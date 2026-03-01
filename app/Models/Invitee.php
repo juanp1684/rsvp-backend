@@ -12,7 +12,6 @@ class Invitee extends Model
 
     protected $fillable = [
         'full_name',
-        'email',
         'phone',
         'code',
         'allowed_companions',

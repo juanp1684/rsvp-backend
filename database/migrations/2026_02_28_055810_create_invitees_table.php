@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('invitees', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('full_name');
-            $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->string('code')->unique();
             $table->unsignedTinyInteger('allowed_companions')->default(0);
