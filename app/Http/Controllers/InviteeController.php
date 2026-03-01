@@ -23,7 +23,7 @@ class InviteeController extends Controller
             'full_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:50',
             'allowed_companions' => 'required|integer|min:0|max:10',
-            'notes' => 'nullable|string',
+            'notes' => 'nullable|string|max:500',
         ]);
 
         $data['code'] = Str::upper(Str::random(8));
@@ -45,7 +45,7 @@ class InviteeController extends Controller
             'phone' => 'sometimes|nullable|string|max:50',
             'allowed_companions' => 'sometimes|integer|min:0|max:10',
             'status' => 'sometimes|in:pending,attending,declined',
-            'notes' => 'sometimes|nullable|string',
+            'notes' => 'sometimes|nullable|string|max:500',
         ]);
 
         $invitee->update($data);
