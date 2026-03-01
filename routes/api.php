@@ -22,5 +22,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Invitee management
     Route::get('/invitees/export', [InviteeController::class, 'export']);
+    Route::post('/invitees/import', [InviteeController::class, 'import']);
     Route::apiResource('invitees', InviteeController::class);
 });

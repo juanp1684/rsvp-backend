@@ -6,12 +6,13 @@ use App\Models\Invitee;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 class InviteeController extends Controller
 {
     public function index(): JsonResponse
     {
-        $invitees = Invitee::withCount('companions')->orderBy('full_name')->get();
+        $invitees = Invitee::with('companions')->orderBy('full_name')->get();
 
         return response()->json($invitees);
     }
@@ -85,5 +86,37 @@ class InviteeController extends Controller
             });
 
         return response()->json($rows);
+    }
+
+    public function import(Request $request): JsonResponse
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,xlsx,xls',
+        ]);
+
+        $path = $request->file('file')->store('imports');
+        $fullPath = storage_path("app/private/{$path}");
+
+        $imported = 0;
+
+        SimpleExcelReader::create($fullPath)
+            ->headersToSnakeCase()
+            ->getRows()
+            ->each(function (array $row) use (&$imported) {
+                $fullName = trim($row['full_name'] ?? '');
+                if (! $fullName) return;
+
+                Invitee::create([
+                    'full_name' => $fullName,
+                    'phone' => $row['phone'] ?? null,
+                    'allowed_companions' => (int) ($row['allowed_companions'] ?? 0),
+                    'notes' => $row['notes'] ?? null,
+                    'code' => Str::upper(Str::random(8)),
+                ]);
+
+                $imported++;
+            });
+
+        return response()->json(['imported' => $imported]);
     }
 }
