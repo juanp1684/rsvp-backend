@@ -60,32 +60,6 @@ class InviteeController extends Controller
         return response()->json(null, 204);
     }
 
-    public function export(): JsonResponse
-    {
-        $rows = Invitee::with('companions')
-            ->orderBy('full_name')
-            ->get()
-            ->flatMap(function (Invitee $invitee) {
-                $primary = [
-                    'type' => 'invitee',
-                    'full_name' => $invitee->full_name,
-                    'phone' => $invitee->phone,
-                    'status' => $invitee->status,
-                ];
-
-                $companions = $invitee->companions->map(fn ($companion) => [
-                    'type' => 'companion',
-                    'full_name' => $companion->full_name,
-                    'phone' => null,
-                    'status' => $invitee->status,
-                ]);
-
-                return collect([$primary])->merge($companions);
-            });
-
-        return response()->json($rows);
-    }
-
     public function import(Request $request): JsonResponse
     {
         $request->validate([
