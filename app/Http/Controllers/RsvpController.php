@@ -20,10 +20,6 @@ class RsvpController extends Controller
     {
         $invitee = Invitee::where('code', $code)->firstOrFail();
 
-        if ($invitee->status !== 'pending') {
-            return response()->json(['message' => 'RSVP has already been submitted.'], 403);
-        }
-
         $event = Event::first();
         if ($event && now()->isAfter($event->rsvp_deadline)) {
             return response()->json(['message' => 'RSVP deadline has passed.'], 403);
