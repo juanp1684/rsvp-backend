@@ -68,7 +68,6 @@ class InviteeController extends Controller
             ->flatMap(function (Invitee $invitee) {
                 $primary = [
                     'type' => 'invitee',
-                    'invitee_id' => $invitee->id,
                     'full_name' => $invitee->full_name,
                     'phone' => $invitee->phone,
                     'status' => $invitee->status,
@@ -76,7 +75,6 @@ class InviteeController extends Controller
 
                 $companions = $invitee->companions->map(fn ($companion) => [
                     'type' => 'companion',
-                    'invitee_id' => $invitee->id,
                     'full_name' => $companion->full_name,
                     'phone' => null,
                     'status' => $invitee->status,
