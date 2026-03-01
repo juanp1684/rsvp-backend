@@ -7,6 +7,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json(['status' => 'ok']));
 
+// Public event info
+Route::get('/event', function () {
+    $event = \App\Models\Event::first();
+    if (! $event) return response()->json(null);
+    return response()->json(array_merge($event->toArray(), [
+        'deadline_passed' => now()->isAfter($event->rsvp_deadline),
+    ]));
+});
+
 // Public RSVP routes
 Route::prefix('rsvp')->group(function () {
     Route::get('/{code}', [RsvpController::class, 'show']);

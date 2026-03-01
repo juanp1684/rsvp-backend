@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\Invitee;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,6 +22,11 @@ class RsvpController extends Controller
 
         if ($invitee->status !== 'pending') {
             return response()->json(['message' => 'RSVP has already been submitted.'], 403);
+        }
+
+        $event = Event::first();
+        if ($event && now()->isAfter($event->rsvp_deadline)) {
+            return response()->json(['message' => 'RSVP deadline has passed.'], 403);
         }
 
         $data = $request->validate([
