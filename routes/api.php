@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
 
     // Event image uploads
-    Route::post('/event/images/{type}', [EventController::class, 'uploadImage']);
+    Route::post('/events/{event}/images/{type}', [EventController::class, 'uploadImage']);
 
     // Invitee management
     Route::post('/invitees/import', [InviteeController::class, 'import']);

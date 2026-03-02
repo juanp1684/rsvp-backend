@@ -23,7 +23,7 @@ class EventController extends Controller
         ]));
     }
 
-    public function uploadImage(Request $request, string $type): JsonResponse
+    public function uploadImage(Request $request, Event $event, string $type): JsonResponse
     {
         $request->validate([
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
@@ -33,7 +33,6 @@ class EventController extends Controller
             return response()->json(['message' => 'Invalid image type.'], 422);
         }
 
-        $event = Event::firstOrFail();
         $column = $type . '_image';
 
         if ($event->$column) {
