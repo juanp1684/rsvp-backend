@@ -4,19 +4,15 @@ namespace Database\Seeders;
 
 use App\Models\Event;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     public function run(): void
     {
         // Events
         $testEvent = Event::create([
             'name'               => 'Test Wedding',
-            'slug'               => 'boda-test',
             'ceremony_at'        => '2026-06-15 12:00:00',
             'reception_at'       => '2026-06-15 15:00:00',
             'ceremony_location'  => 'Iglesia San Francisco',
@@ -30,7 +26,6 @@ class DatabaseSeeder extends Seeder
 
         $realEvent = Event::create([
             'name'               => 'Real Wedding',
-            'slug'               => 'boda-real',
             'ceremony_at'        => '2026-10-04 12:00:00',
             'reception_at'       => '2026-10-04 16:00:00',
             'ceremony_location'  => 'Catedral Metropolitana',

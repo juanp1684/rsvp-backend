@@ -4,9 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Event extends Model
 {
+    protected static function booted(): void
+    {
+        static::creating(function (Event $event) {
+            if (! $event->slug) {
+                $event->slug = (string) Str::uuid();
+            }
+        });
+    }
+
     protected $fillable = [
         'name',
         'slug',
