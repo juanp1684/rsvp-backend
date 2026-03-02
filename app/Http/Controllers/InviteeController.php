@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\Invitee;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,22 +11,18 @@ use Spatie\SimpleExcel\SimpleExcelReader;
 
 class InviteeController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Event $event): JsonResponse
     {
-        $event = $request->attributes->get('active_event');
-
-        $invitees = Invitee::where('event_id', $event->id)
-            ->with('companions')
-            ->orderBy('full_name')
-            ->get();
-
-        return response()->json($invitees);
+        return response()->json(
+            Invitee::where('event_id', $event->id)
+                ->with('companions')
+                ->orderBy('full_name')
+                ->get()
+        );
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, Event $event): JsonResponse
     {
-        $event = $request->attributes->get('active_event');
-
         $data = $request->validate([
             'full_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:50',
@@ -36,23 +33,19 @@ class InviteeController extends Controller
         $data['code'] = Str::upper(Str::random(8));
         $data['event_id'] = $event->id;
 
-        $invitee = Invitee::create($data);
-
-        return response()->json($invitee, 201);
+        return response()->json(Invitee::create($data), 201);
     }
 
-    public function show(Request $request, Invitee $invitee): JsonResponse
+    public function show(Event $event, Invitee $invitee): JsonResponse
     {
-        $event = $request->attributes->get('active_event');
-        abort_if($invitee->event_id !== $event->id, 403);
+        abort_if($invitee->event_id !== $event->id, 404);
 
         return response()->json($invitee->load('companions'));
     }
 
-    public function update(Request $request, Invitee $invitee): JsonResponse
+    public function update(Request $request, Event $event, Invitee $invitee): JsonResponse
     {
-        $event = $request->attributes->get('active_event');
-        abort_if($invitee->event_id !== $event->id, 403);
+        abort_if($invitee->event_id !== $event->id, 404);
 
         $data = $request->validate([
             'full_name' => 'sometimes|string|max:255',
@@ -67,20 +60,17 @@ class InviteeController extends Controller
         return response()->json($invitee->load('companions'));
     }
 
-    public function destroy(Request $request, Invitee $invitee): JsonResponse
+    public function destroy(Event $event, Invitee $invitee): JsonResponse
     {
-        $event = $request->attributes->get('active_event');
-        abort_if($invitee->event_id !== $event->id, 403);
+        abort_if($invitee->event_id !== $event->id, 404);
 
         $invitee->delete();
 
         return response()->json(null, 204);
     }
 
-    public function import(Request $request): JsonResponse
+    public function import(Request $request, Event $event): JsonResponse
     {
-        $event = $request->attributes->get('active_event');
-
         $request->validate([
             'file' => 'required|file|mimes:csv,xlsx,xls',
         ]);

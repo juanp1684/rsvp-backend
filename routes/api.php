@@ -25,11 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Event list (super admin only — controller enforces)
     Route::get('/events', [EventController::class, 'index']);
 
-    // Event image uploads (controller enforces ownership)
-    Route::post('/events/{event}/images/{type}', [EventController::class, 'uploadImage']);
-
-    // Invitee management — scoped to active event via middleware
-    Route::middleware('active.event')->group(function () {
+    // All event-scoped routes — active.event middleware checks ownership
+    Route::middleware('active.event')->prefix('events/{event}')->group(function () {
+        Route::post('/images/{type}', [EventController::class, 'uploadImage']);
         Route::post('/invitees/import', [InviteeController::class, 'import']);
         Route::apiResource('invitees', InviteeController::class);
     });

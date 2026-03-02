@@ -31,9 +31,6 @@ class EventController extends Controller
 
     public function uploadImage(Request $request, Event $event, string $type): JsonResponse
     {
-        $user = $request->user();
-        abort_unless($user->isSuperAdmin() || $user->event_id === $event->id, 403);
-
         $request->validate([
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
