@@ -39,4 +39,4 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 EXPOSE 9000
 
-CMD ["php-fpm"]
+CMD ["sh", "-c", "php artisan storage:link --force 2>/dev/null; exec php-fpm"]

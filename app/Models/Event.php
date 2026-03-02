@@ -17,6 +17,10 @@ class Event extends Model
         'dress_code',
         'rsvp_deadline',
         'notes',
+        'couple_image',
+        'ceremony_image',
+        'reception_image',
+        'invitation_image',
     ];
 
     protected $casts = [
