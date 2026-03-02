@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
     protected $fillable = [
         'name',
+        'slug',
         'ceremony_at',
         'reception_at',
         'ceremony_location',
@@ -28,4 +30,9 @@ class Event extends Model
         'reception_at' => 'datetime',
         'rsvp_deadline' => 'datetime',
     ];
+
+    public function invitees(): HasMany
+    {
+        return $this->hasMany(Invitee::class);
+    }
 }

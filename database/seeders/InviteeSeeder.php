@@ -3,13 +3,14 @@
 namespace Database\Seeders;
 
 use App\Models\Companion;
+use App\Models\Event;
 use App\Models\Invitee;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class InviteeSeeder extends Seeder
 {
-    public function run(): void
+    public function run(Event $event): void
     {
         $invitees = [
             // Attending with companions registered
@@ -77,13 +78,14 @@ class InviteeSeeder extends Seeder
 
             $invitee = Invitee::create([
                 ...$data,
-                'code' => Str::upper(Str::random(8)),
+                'event_id' => $event->id,
+                'code'     => Str::upper(Str::random(8)),
             ]);
 
             foreach ($companions as $name) {
                 Companion::create([
                     'invitee_id' => $invitee->id,
-                    'full_name' => $name,
+                    'full_name'  => $name,
                 ]);
             }
         }

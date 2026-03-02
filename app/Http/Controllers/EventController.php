@@ -9,10 +9,16 @@ use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
-    public function show(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $event = Event::first();
-        if (! $event) return response()->json(null);
+        abort_unless($request->user()->isSuperAdmin(), 403);
+
+        return response()->json(Event::orderBy('name')->get());
+    }
+
+    public function show(string $slug): JsonResponse
+    {
+        $event = Event::where('slug', $slug)->firstOrFail();
 
         return response()->json(array_merge($event->toArray(), [
             'deadline_passed'      => now()->isAfter($event->rsvp_deadline),
@@ -25,6 +31,9 @@ class EventController extends Controller
 
     public function uploadImage(Request $request, Event $event, string $type): JsonResponse
     {
+        $user = $request->user();
+        abort_unless($user->isSuperAdmin() || $user->event_id === $event->id, 403);
+
         $request->validate([
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);

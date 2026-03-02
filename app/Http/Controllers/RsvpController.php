@@ -9,21 +9,27 @@ use Illuminate\Http\Request;
 
 class RsvpController extends Controller
 {
-    public function show(string $code): JsonResponse
+    public function show(string $eventSlug, string $code): JsonResponse
     {
-        $invitee = Invitee::where('code', $code)->firstOrFail();
+        $event = Event::where('slug', $eventSlug)->firstOrFail();
+        $invitee = Invitee::where('code', $code)
+            ->where('event_id', $event->id)
+            ->firstOrFail();
 
         return response()->json($invitee->load('companions'));
     }
 
-    public function submit(Request $request, string $code): JsonResponse
+    public function submit(Request $request, string $eventSlug, string $code): JsonResponse
     {
-        $invitee = Invitee::where('code', $code)->firstOrFail();
+        $event = Event::where('slug', $eventSlug)->firstOrFail();
 
-        $event = Event::first();
-        if ($event && now()->isAfter($event->rsvp_deadline)) {
+        if ($event->rsvp_deadline && now()->isAfter($event->rsvp_deadline)) {
             return response()->json(['message' => 'RSVP deadline has passed.'], 403);
         }
+
+        $invitee = Invitee::where('code', $code)
+            ->where('event_id', $event->id)
+            ->firstOrFail();
 
         $data = $request->validate([
             'status' => 'required|in:attending,declined',

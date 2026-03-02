@@ -10,15 +10,22 @@ use Spatie\SimpleExcel\SimpleExcelReader;
 
 class InviteeController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $invitees = Invitee::with('companions')->orderBy('full_name')->get();
+        $event = $request->attributes->get('active_event');
+
+        $invitees = Invitee::where('event_id', $event->id)
+            ->with('companions')
+            ->orderBy('full_name')
+            ->get();
 
         return response()->json($invitees);
     }
 
     public function store(Request $request): JsonResponse
     {
+        $event = $request->attributes->get('active_event');
+
         $data = $request->validate([
             'full_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:50',
@@ -27,19 +34,26 @@ class InviteeController extends Controller
         ]);
 
         $data['code'] = Str::upper(Str::random(8));
+        $data['event_id'] = $event->id;
 
         $invitee = Invitee::create($data);
 
         return response()->json($invitee, 201);
     }
 
-    public function show(Invitee $invitee): JsonResponse
+    public function show(Request $request, Invitee $invitee): JsonResponse
     {
+        $event = $request->attributes->get('active_event');
+        abort_if($invitee->event_id !== $event->id, 403);
+
         return response()->json($invitee->load('companions'));
     }
 
     public function update(Request $request, Invitee $invitee): JsonResponse
     {
+        $event = $request->attributes->get('active_event');
+        abort_if($invitee->event_id !== $event->id, 403);
+
         $data = $request->validate([
             'full_name' => 'sometimes|string|max:255',
             'phone' => 'sometimes|nullable|string|max:50',
@@ -53,8 +67,11 @@ class InviteeController extends Controller
         return response()->json($invitee->load('companions'));
     }
 
-    public function destroy(Invitee $invitee): JsonResponse
+    public function destroy(Request $request, Invitee $invitee): JsonResponse
     {
+        $event = $request->attributes->get('active_event');
+        abort_if($invitee->event_id !== $event->id, 403);
+
         $invitee->delete();
 
         return response()->json(null, 204);
@@ -62,6 +79,8 @@ class InviteeController extends Controller
 
     public function import(Request $request): JsonResponse
     {
+        $event = $request->attributes->get('active_event');
+
         $request->validate([
             'file' => 'required|file|mimes:csv,xlsx,xls',
         ]);
@@ -74,11 +93,12 @@ class InviteeController extends Controller
         SimpleExcelReader::create($fullPath)
             ->headersToSnakeCase()
             ->getRows()
-            ->each(function (array $row) use (&$imported) {
+            ->each(function (array $row) use ($event, &$imported) {
                 $fullName = trim($row['full_name'] ?? '');
                 if (! $fullName) return;
 
                 Invitee::create([
+                    'event_id' => $event->id,
                     'full_name' => $fullName,
                     'phone' => $row['phone'] ?? null,
                     'allowed_companions' => (int) ($row['allowed_companions'] ?? 0),

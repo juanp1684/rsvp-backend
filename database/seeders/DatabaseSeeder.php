@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Event;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -10,17 +11,64 @@ class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@rsvp.test',
-            'password' => bcrypt('password'),
+        // Events
+        $testEvent = Event::create([
+            'name'               => 'Test Wedding',
+            'slug'               => 'boda-test',
+            'ceremony_at'        => '2026-06-15 12:00:00',
+            'reception_at'       => '2026-06-15 15:00:00',
+            'ceremony_location'  => 'Iglesia San Francisco',
+            'ceremony_url'       => 'https://maps.google.com',
+            'reception_location' => 'Salón Las Palmas',
+            'reception_url'      => 'https://maps.google.com',
+            'dress_code'         => 'Formal',
+            'rsvp_deadline'      => '2026-06-01 23:59:59',
+            'notes'              => 'This is a test event for development.',
         ]);
 
-        $this->call(InviteeSeeder::class);
+        $realEvent = Event::create([
+            'name'               => 'Real Wedding',
+            'slug'               => 'boda-real',
+            'ceremony_at'        => '2026-10-04 12:00:00',
+            'reception_at'       => '2026-10-04 16:00:00',
+            'ceremony_location'  => 'Catedral Metropolitana',
+            'ceremony_url'       => 'https://maps.google.com',
+            'reception_location' => 'Hacienda San Miguel',
+            'reception_url'      => 'https://maps.google.com',
+            'dress_code'         => 'Cocktail',
+            'rsvp_deadline'      => '2026-09-15 23:59:59',
+        ]);
+
+        // Super admin — can manage all events
+        User::create([
+            'name'     => 'Super Admin',
+            'email'    => 'super@rsvp.test',
+            'password' => bcrypt('password'),
+            'role'     => 'super_admin',
+        ]);
+
+        // Regular admin for test event
+        User::create([
+            'name'     => 'Admin Test',
+            'email'    => 'admin@rsvp.test',
+            'password' => bcrypt('password'),
+            'role'     => 'admin',
+            'event_id' => $testEvent->id,
+        ]);
+
+        // Regular admin for real event
+        User::create([
+            'name'     => 'Admin Real',
+            'email'    => 'admin-real@rsvp.test',
+            'password' => bcrypt('password'),
+            'role'     => 'admin',
+            'event_id' => $realEvent->id,
+        ]);
+
+        // Invitees for each event
+        $this->callWith(InviteeSeeder::class, ['event' => $testEvent]);
+        $this->callWith(InviteeSeeder::class, ['event' => $realEvent]);
     }
 }
