@@ -36,6 +36,19 @@ class DatabaseSeeder extends Seeder
             'rsvp_deadline'      => '2026-09-15 23:59:59',
         ]);
 
+        // Past event — deadline and ceremony already happened
+        $pastEvent = Event::create([
+            'name'               => 'Past Wedding',
+            'ceremony_at'        => '2025-11-08 13:00:00',
+            'reception_at'       => '2025-11-08 17:00:00',
+            'ceremony_location'  => 'Capilla Santa Elena',
+            'ceremony_url'       => 'https://maps.google.com',
+            'reception_location' => 'Villa La Joya',
+            'reception_url'      => 'https://maps.google.com',
+            'dress_code'         => 'Semi-formal',
+            'rsvp_deadline'      => '2025-10-25 23:59:59',
+        ]);
+
         // Super admin — can manage all events
         User::create([
             'name'     => 'Super Admin',
@@ -62,8 +75,18 @@ class DatabaseSeeder extends Seeder
             'event_id' => $realEvent->id,
         ]);
 
+        // Regular admin for past event
+        User::create([
+            'name'     => 'Admin Past',
+            'email'    => 'admin-past@rsvp.test',
+            'password' => bcrypt('password'),
+            'role'     => 'admin',
+            'event_id' => $pastEvent->id,
+        ]);
+
         // Invitees for each event
         $this->callWith(InviteeSeeder::class, ['event' => $testEvent]);
         $this->callWith(InviteeSeeder::class, ['event' => $realEvent]);
+        $this->callWith(InviteeSeeder::class, ['event' => $pastEvent]);
     }
 }
