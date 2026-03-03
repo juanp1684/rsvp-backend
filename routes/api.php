@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanionController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InviteeController;
 use App\Http\Controllers\RsvpController;
@@ -30,5 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/images/{type}', [EventController::class, 'uploadImage']);
         Route::post('/invitees/import', [InviteeController::class, 'import']);
         Route::apiResource('invitees', InviteeController::class);
+        Route::apiResource('invitees.companions', CompanionController::class)
+            ->only(['store', 'update', 'destroy']);
     });
 });
