@@ -20,12 +20,14 @@ class EventController extends Controller
     {
         $event = Event::where('slug', $slug)->firstOrFail();
 
+        $disk = Storage::disk('public');
+
         return response()->json(array_merge($event->toArray(), [
             'deadline_passed'      => now()->isAfter($event->rsvp_deadline),
-            'couple_image_url'     => $event->couple_image     ? Storage::url($event->couple_image)     : null,
-            'ceremony_image_url'   => $event->ceremony_image   ? Storage::url($event->ceremony_image)   : null,
-            'reception_image_url'  => $event->reception_image  ? Storage::url($event->reception_image)  : null,
-            'invitation_image_url' => $event->invitation_image ? Storage::url($event->invitation_image) : null,
+            'couple_image_url'     => $event->couple_image     ? $disk->url($event->couple_image)     : null,
+            'ceremony_image_url'   => $event->ceremony_image   ? $disk->url($event->ceremony_image)   : null,
+            'reception_image_url'  => $event->reception_image  ? $disk->url($event->reception_image)  : null,
+            'invitation_image_url' => $event->invitation_image ? $disk->url($event->invitation_image) : null,
         ]));
     }
 
@@ -48,6 +50,6 @@ class EventController extends Controller
         $path = $request->file('image')->store('event', 'public');
         $event->update([$column => $path]);
 
-        return response()->json(['url' => Storage::url($path)]);
+        return response()->json(['url' => Storage::disk('public')->url($path)]);
     }
 }
