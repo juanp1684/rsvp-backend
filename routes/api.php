@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // All event-scoped routes — active.event middleware checks ownership
     Route::middleware('active.event')->prefix('events/{event}')->group(function () {
         Route::post('/images/{type}', [EventController::class, 'uploadImage']);
+        Route::delete('/images/{type}', [EventController::class, 'destroyImage']);
         Route::post('/invitees/import', [InviteeController::class, 'import']);
         Route::apiResource('invitees', InviteeController::class);
         Route::apiResource('invitees.companions', CompanionController::class)

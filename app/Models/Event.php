@@ -21,6 +21,7 @@ class Event extends Model
         'rsvp_deadline',
         'notes',
         'couple_image',
+        'couple_mobile_image',
         'ceremony_image',
         'reception_image',
         'invitation_image',

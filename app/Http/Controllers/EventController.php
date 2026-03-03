@@ -23,11 +23,12 @@ class EventController extends Controller
         $disk = Storage::disk('public');
 
         return response()->json(array_merge($event->toArray(), [
-            'deadline_passed'      => now()->isAfter($event->rsvp_deadline),
-            'couple_image_url'     => $event->couple_image     ? $disk->url($event->couple_image)     : null,
-            'ceremony_image_url'   => $event->ceremony_image   ? $disk->url($event->ceremony_image)   : null,
-            'reception_image_url'  => $event->reception_image  ? $disk->url($event->reception_image)  : null,
-            'invitation_image_url' => $event->invitation_image ? $disk->url($event->invitation_image) : null,
+            'deadline_passed'             => now()->isAfter($event->rsvp_deadline),
+            'couple_image_url'            => $event->couple_image        ? $disk->url($event->couple_image)        : null,
+            'couple_mobile_image_url'     => $event->couple_mobile_image ? $disk->url($event->couple_mobile_image) : null,
+            'ceremony_image_url'          => $event->ceremony_image      ? $disk->url($event->ceremony_image)      : null,
+            'reception_image_url'         => $event->reception_image     ? $disk->url($event->reception_image)     : null,
+            'invitation_image_url'        => $event->invitation_image    ? $disk->url($event->invitation_image)    : null,
         ]));
     }
 
@@ -37,7 +38,7 @@ class EventController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
-        if (! in_array($type, ['couple', 'ceremony', 'reception', 'invitation'])) {
+        if (! in_array($type, ['couple', 'couple_mobile', 'ceremony', 'reception', 'invitation'])) {
             return response()->json(['message' => 'Invalid image type.'], 422);
         }
 
@@ -51,5 +52,21 @@ class EventController extends Controller
         $event->update([$column => $path]);
 
         return response()->json(['url' => Storage::disk('public')->url($path)]);
+    }
+
+    public function destroyImage(Event $event, string $type): JsonResponse
+    {
+        if (! in_array($type, ['couple', 'couple_mobile', 'ceremony', 'reception', 'invitation'])) {
+            return response()->json(['message' => 'Invalid image type.'], 422);
+        }
+
+        $column = $type . '_image';
+
+        if ($event->$column) {
+            Storage::disk('public')->delete($event->$column);
+            $event->update([$column => null]);
+        }
+
+        return response()->json(null, 204);
     }
 }
