@@ -34,7 +34,7 @@ class EventController extends Controller
     public function uploadImage(Request $request, Event $event, string $type): JsonResponse
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
         if (! in_array($type, ['couple', 'ceremony', 'reception', 'invitation'])) {
