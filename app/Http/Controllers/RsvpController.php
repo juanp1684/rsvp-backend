@@ -43,9 +43,11 @@ class RsvpController extends Controller
             'notes' => $data['notes'] ?? $invitee->notes,
         ]);
 
-        if ($data['status'] === 'attending' && ! empty($data['companions'])) {
+        if ($data['status'] === 'attending') {
             $invitee->companions()->delete();
-            $invitee->companions()->createMany($data['companions']);
+            if (! empty($data['companions'])) {
+                $invitee->companions()->createMany($data['companions']);
+            }
         } elseif ($data['status'] === 'declined') {
             $invitee->companions()->delete();
         }
