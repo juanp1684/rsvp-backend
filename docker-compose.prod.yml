@@ -6,6 +6,8 @@ services:
     container_name: rsvp-app
     restart: unless-stopped
     env_file: .env
+    volumes:
+      - ./storage:/var/www/storage
     networks:
       - rsvp
     depends_on:
