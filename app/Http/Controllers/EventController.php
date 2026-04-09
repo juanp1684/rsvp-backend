@@ -32,6 +32,26 @@ class EventController extends Controller
         ]));
     }
 
+    public function update(Request $request, Event $event): JsonResponse
+    {
+        $data = $request->validate([
+            'name'               => 'required|string|max:255',
+            'ceremony_at'        => 'required|date',
+            'reception_at'       => 'required|date',
+            'ceremony_location'  => 'required|string|max:255',
+            'ceremony_url'       => 'nullable|url|max:255',
+            'reception_location' => 'required|string|max:255',
+            'reception_url'      => 'nullable|url|max:255',
+            'dress_code'         => 'nullable|string|max:255',
+            'rsvp_deadline'      => 'required|date|before:ceremony_at',
+            'notes'              => 'nullable|string',
+        ]);
+
+        $event->update($data);
+
+        return response()->json($event->fresh());
+    }
+
     public function uploadImage(Request $request, Event $event, string $type): JsonResponse
     {
         $request->validate([
