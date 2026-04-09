@@ -69,6 +69,20 @@ class InviteeController extends Controller
         return response()->json(null, 204);
     }
 
+    public function bulkDestroy(Request $request, Event $event): JsonResponse
+    {
+        $request->validate([
+            'ids'   => 'required|array|min:1',
+            'ids.*' => 'uuid',
+        ]);
+
+        Invitee::where('event_id', $event->id)
+            ->whereIn('id', $request->ids)
+            ->delete();
+
+        return response()->json(null, 204);
+    }
+
     public function import(Request $request, Event $event): JsonResponse
     {
         $request->validate([
