@@ -95,18 +95,22 @@ class InviteeController extends Controller
         $imported = 0;
 
         SimpleExcelReader::create($fullPath)
-            ->headersToSnakeCase()
             ->getRows()
             ->each(function (array $row) use ($event, &$imported) {
-                $fullName = trim($row['full_name'] ?? '');
+                // Normalize header keys: lowercase, trim, collapse spaces
+                $row = collect($row)->mapWithKeys(fn ($v, $k) => [
+                    mb_strtolower(trim($k)) => $v,
+                ])->all();
+
+                $fullName = trim($row['nombre'] ?? '');
                 if (! $fullName) return;
 
                 Invitee::create([
                     'event_id' => $event->id,
                     'full_name' => $fullName,
-                    'phone' => $row['phone'] ?? null,
-                    'allowed_companions' => (int) ($row['allowed_companions'] ?? 0),
-                    'notes' => $row['notes'] ?? null,
+                    'phone' => $row['teléfono'] ?? $row['telefono'] ?? null,
+                    'allowed_companions' => (int) ($row['acompañantes'] ?? $row['acompanantes'] ?? 0),
+                    'notes' => $row['notas'] ?? null,
                     'code' => Str::upper(Str::random(8)),
                 ]);
 
