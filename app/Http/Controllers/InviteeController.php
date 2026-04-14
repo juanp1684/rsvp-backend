@@ -94,28 +94,58 @@ class InviteeController extends Controller
 
         $imported = 0;
 
+        $rows = [];
+        $errors = [];
+        $rowNumber = 1;
+
         SimpleExcelReader::create($fullPath)
             ->getRows()
-            ->each(function (array $row) use ($event, &$imported) {
-                // Normalize header keys: lowercase, trim, collapse spaces
-                $row = collect($row)->mapWithKeys(fn ($v, $k) => [
+            ->each(function (array $row) use (&$rows, &$errors, &$rowNumber) {
+                $rowNumber++;
+
+                $normalized = collect($row)->mapWithKeys(fn ($v, $k) => [
                     mb_strtolower(trim($k)) => $v,
                 ])->all();
 
-                $fullName = trim($row['nombre'] ?? '');
-                if (! $fullName) return;
+                $nombre = trim($normalized['nombre'] ?? '');
+                $companions = $normalized['acompañantes'] ?? $normalized['acompanantes'] ?? null;
 
-                Invitee::create([
-                    'event_id' => $event->id,
-                    'full_name' => $fullName,
-                    'phone' => $row['teléfono'] ?? $row['telefono'] ?? null,
-                    'allowed_companions' => (int) ($row['acompañantes'] ?? $row['acompanantes'] ?? 0),
-                    'notes' => $row['notas'] ?? null,
-                    'code' => Str::upper(Str::random(8)),
-                ]);
+                if ($nombre === '') {
+                    $errors[] = ['row' => $rowNumber, 'field' => 'nombre', 'message' => 'El nombre es requerido.'];
+                }
 
-                $imported++;
+                if ($companions !== null && $companions !== '') {
+                    if (! preg_match('/^\d+$/', (string) $companions)) {
+                        $errors[] = ['row' => $rowNumber, 'field' => 'acompañantes', 'message' => 'Debe ser un número entero (ej. 0, 1, 2).'];
+                    } elseif ((int) $companions < 0 || (int) $companions > 20) {
+                        $errors[] = ['row' => $rowNumber, 'field' => 'acompañantes', 'message' => 'Debe ser un número entre 0 y 20.'];
+                    }
+                }
+
+                $rows[] = ['normalized' => $normalized, 'nombre' => $nombre];
             });
+
+        if (! empty($errors)) {
+            return response()->json(['errors' => $errors], 422);
+        }
+
+        foreach ($rows as $item) {
+            $normalized = $item['normalized'];
+            $fullName = $item['nombre'];
+            if (! $fullName) continue;
+
+            $companions = $normalized['acompañantes'] ?? $normalized['acompanantes'] ?? null;
+
+            Invitee::create([
+                'event_id' => $event->id,
+                'full_name' => $fullName,
+                'phone' => $normalized['teléfono'] ?? $normalized['telefono'] ?? null,
+                'allowed_companions' => ($companions !== null && $companions !== '') ? (int) $companions : 0,
+                'notes' => $normalized['notas'] ?? null,
+                'code' => Str::upper(Str::random(8)),
+            ]);
+            $imported++;
+        }
 
         return response()->json(['imported' => $imported]);
     }
