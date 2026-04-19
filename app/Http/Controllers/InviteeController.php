@@ -28,6 +28,7 @@ class InviteeController extends Controller
             'phone' => 'nullable|string|max:50',
             'allowed_companions' => 'required|integer|min:0|max:10',
             'notes' => 'nullable|string|max:500',
+            'type' => 'sometimes|in:regular,late',
         ]);
 
         $data['code'] = Str::upper(Str::random(8));
@@ -53,6 +54,7 @@ class InviteeController extends Controller
             'allowed_companions' => 'sometimes|integer|min:0|max:10',
             'status' => 'sometimes|in:pending,attending,declined',
             'notes' => 'sometimes|nullable|string|max:500',
+            'type' => 'sometimes|in:regular,late',
         ]);
 
         $invitee->update($data);
@@ -109,6 +111,7 @@ class InviteeController extends Controller
 
                 $nombre = trim($normalized['nombre'] ?? '');
                 $companions = $normalized['acompañantes'] ?? $normalized['acompanantes'] ?? null;
+                $tipo = strtolower(trim($normalized['tipo'] ?? 'regular'));
 
                 if ($nombre === '') {
                     $errors[] = ['row' => $rowNumber, 'field' => 'nombre', 'message' => 'El nombre es requerido.'];
@@ -122,7 +125,11 @@ class InviteeController extends Controller
                     }
                 }
 
-                $rows[] = ['normalized' => $normalized, 'nombre' => $nombre];
+                if (! in_array($tipo, ['regular', 'tarde', 'late'])) {
+                    $errors[] = ['row' => $rowNumber, 'field' => 'tipo', 'message' => 'Debe ser "regular" o "tarde".'];
+                }
+
+                $rows[] = ['normalized' => $normalized, 'nombre' => $nombre, 'tipo' => $tipo];
             });
 
         if (! empty($errors)) {
@@ -135,9 +142,11 @@ class InviteeController extends Controller
             if (! $fullName) continue;
 
             $companions = $normalized['acompañantes'] ?? $normalized['acompanantes'] ?? null;
+            $tipo = $item['tipo'] ?? 'regular';
 
             Invitee::create([
                 'event_id' => $event->id,
+                'type' => ($tipo === 'tarde') ? 'late' : $tipo,
                 'full_name' => $fullName,
                 'phone' => $normalized['teléfono'] ?? $normalized['telefono'] ?? null,
                 'allowed_companions' => ($companions !== null && $companions !== '') ? (int) $companions : 0,

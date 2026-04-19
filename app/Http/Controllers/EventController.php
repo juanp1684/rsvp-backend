@@ -44,6 +44,7 @@ class EventController extends Controller
             'reception_url'      => 'nullable|url|max:255',
             'dress_code'         => 'nullable|string|max:255',
             'rsvp_deadline'      => 'required|date|before:ceremony_at',
+            'late_rsvp_deadline' => 'nullable|date|after_or_equal:rsvp_deadline|before:ceremony_at',
             'notes'              => 'nullable|string',
         ]);
 

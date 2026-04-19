@@ -23,13 +23,17 @@ class RsvpController extends Controller
     {
         $event = Event::where('slug', $eventSlug)->firstOrFail();
 
-        if ($event->rsvp_deadline && now()->isAfter($event->rsvp_deadline)) {
-            return response()->json(['message' => 'RSVP deadline has passed.'], 403);
-        }
-
         $invitee = Invitee::where('code', $code)
             ->where('event_id', $event->id)
             ->firstOrFail();
+
+        $deadline = $invitee->type === 'late'
+            ? ($event->late_rsvp_deadline ?? $event->rsvp_deadline)
+            : $event->rsvp_deadline;
+
+        if ($deadline && now()->startOfDay()->isAfter($deadline)) {
+            return response()->json(['message' => 'RSVP deadline has passed.'], 403);
+        }
 
         $data = $request->validate([
             'status' => 'required|in:attending,declined',

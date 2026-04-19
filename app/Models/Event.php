@@ -25,12 +25,14 @@ class Event extends Model
         'ceremony_image',
         'reception_image',
         'invitation_image',
+        'late_rsvp_deadline',
     ];
 
     protected $casts = [
-        'ceremony_at'  => 'datetime',
+        'ceremony_at' => 'datetime',
         'reception_at' => 'datetime',
         'rsvp_deadline' => 'datetime',
+        'late_rsvp_deadline' => 'date',
     ];
 
     public function invitees(): HasMany

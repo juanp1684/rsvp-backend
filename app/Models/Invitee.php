@@ -13,6 +13,7 @@ class Invitee extends Model
 
     protected $fillable = [
         'event_id',
+        'type',
         'full_name',
         'phone',
         'code',
