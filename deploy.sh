@@ -8,5 +8,9 @@ docker compose -f docker-compose.prod.yml up -d --build
 docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
 docker compose -f docker-compose.prod.yml exec app php artisan config:clear
 docker compose -f docker-compose.prod.yml exec app php artisan cache:clear
+docker compose -f docker-compose.prod.yml exec app php artisan storage:link
+docker compose -f docker-compose.prod.yml exec app mkdir -p storage/app/private/imports
+docker compose -f docker-compose.prod.yml exec app chmod -R 775 storage/app/private
+docker compose -f docker-compose.prod.yml exec app chown -R www-data:www-data storage/app/private
 
 echo "Backend deployed successfully."

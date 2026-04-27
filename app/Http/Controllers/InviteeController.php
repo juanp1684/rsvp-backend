@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Invitee;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
@@ -92,7 +93,7 @@ class InviteeController extends Controller
         ]);
 
         $path = $request->file('file')->store('imports');
-        $fullPath = storage_path("app/private/{$path}");
+        $fullPath = Storage::disk('local')->path($path);
 
         $imported = 0;
 
