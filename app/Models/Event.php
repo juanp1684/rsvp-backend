@@ -10,6 +10,8 @@ class Event extends Model
 
     protected $fillable = [
         'name',
+        'partner1_parents',
+        'partner2_parents',
         'slug',
         'ceremony_at',
         'reception_at',

@@ -39,6 +39,8 @@ class EventController extends Controller
     {
         $data = $request->validate([
             'name'               => 'required|string|max:255',
+            'partner1_parents'   => 'nullable|string|max:255',
+            'partner2_parents'   => 'nullable|string|max:255',
             'ceremony_at'        => 'required|date',
             'reception_at'       => 'required|date',
             'ceremony_location'  => 'required|string|max:255',
