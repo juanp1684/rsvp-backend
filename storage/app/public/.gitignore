@@ -1,2 +1,8 @@
 *
 !.gitignore
+!event/
+event/*
+!event/.gitkeep
+!event/audio/
+event/audio/*
+!event/audio/.gitkeep
