@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/', [EventController::class, 'update']);
         Route::post('/images/{type}', [EventController::class, 'uploadImage']);
         Route::delete('/images/{type}', [EventController::class, 'destroyImage']);
+        Route::post('/song', [EventController::class, 'uploadSong']);
+        Route::delete('/song', [EventController::class, 'destroySong']);
         Route::post('/invitees/bulk-destroy', [InviteeController::class, 'bulkDestroy']);
         Route::post('/invitees/import', [InviteeController::class, 'import']);
         Route::apiResource('invitees', InviteeController::class);

@@ -26,6 +26,13 @@ class Event extends Model
         'reception_image',
         'invitation_image',
         'late_rsvp_deadline',
+        'no_kids',
+        'no_kids_message',
+        'confirm_attending_image',
+        'confirm_declined_image',
+        'confirm_attending_message',
+        'confirm_declined_message',
+        'song',
     ];
 
     protected $casts = [
@@ -33,6 +40,7 @@ class Event extends Model
         'reception_at' => 'datetime',
         'rsvp_deadline' => 'datetime',
         'late_rsvp_deadline' => 'date',
+        'no_kids' => 'boolean',
     ];
 
     public function invitees(): HasMany
