@@ -41,7 +41,7 @@ class Event extends Model
         'ceremony_at' => 'datetime',
         'reception_at' => 'datetime',
         'rsvp_deadline' => 'datetime',
-        'late_rsvp_deadline' => 'date',
+        'late_rsvp_deadline' => 'datetime',
         'no_kids' => 'boolean',
     ];
 
