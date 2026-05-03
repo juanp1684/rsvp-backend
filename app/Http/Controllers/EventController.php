@@ -57,10 +57,13 @@ class EventController extends Controller
             'rsvp_deadline'      => 'required|date|before:ceremony_at',
             'late_rsvp_deadline' => 'nullable|date|after_or_equal:rsvp_deadline|before:ceremony_at',
             'notes'              => 'nullable|string',
-            'no_kids'                    => 'boolean',
-            'no_kids_message'            => 'nullable|string|max:500',
-            'confirm_attending_message'  => 'nullable|string|max:255',
-            'confirm_declined_message'   => 'nullable|string|max:255',
+            'no_kids'                        => 'boolean',
+            'no_kids_message'                => 'nullable|string|max:500',
+            'confirm_attending_message'      => 'nullable|string|max:255',
+            'confirm_declined_message'       => 'nullable|string|max:255',
+            'civil_ceremony_same_venue'      => 'sometimes|boolean',
+            'civil_reception_same_venue'     => 'sometimes|boolean',
+            'ceremony_reception_same_venue'  => 'sometimes|boolean',
         ]);
 
         $event->update($data);

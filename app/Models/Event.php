@@ -41,6 +41,9 @@ class Event extends Model
         'confirm_attending_message',
         'confirm_declined_message',
         'song',
+        'civil_ceremony_same_venue',
+        'civil_reception_same_venue',
+        'ceremony_reception_same_venue',
     ];
 
     protected $casts = [
@@ -50,6 +53,9 @@ class Event extends Model
         'rsvp_deadline' => 'datetime',
         'late_rsvp_deadline' => 'datetime',
         'no_kids' => 'boolean',
+        'civil_ceremony_same_venue' => 'boolean',
+        'civil_reception_same_venue' => 'boolean',
+        'ceremony_reception_same_venue' => 'boolean',
     ];
 
     public function invitees(): HasMany
