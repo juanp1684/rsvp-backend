@@ -16,9 +16,13 @@ class Event extends Model
         'partner2_parent2',
         'slug',
         'ceremony_at',
-        'reception_at',
         'ceremony_location',
         'ceremony_url',
+        'civil_at',
+        'civil_location',
+        'civil_url',
+        'civil_image',
+        'reception_at',
         'reception_location',
         'reception_url',
         'dress_code',
@@ -41,6 +45,7 @@ class Event extends Model
 
     protected $casts = [
         'ceremony_at' => 'datetime',
+        'civil_at' => 'datetime',
         'reception_at' => 'datetime',
         'rsvp_deadline' => 'datetime',
         'late_rsvp_deadline' => 'datetime',
