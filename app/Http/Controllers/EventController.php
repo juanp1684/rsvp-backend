@@ -66,10 +66,15 @@ class EventController extends Controller
             'civil_ceremony_same_venue'      => 'sometimes|boolean',
             'civil_reception_same_venue'     => 'sometimes|boolean',
             'ceremony_reception_same_venue'  => 'sometimes|boolean',
+            'subdomain'                      => 'nullable|string|max:63',
             'subtitle'                       => 'nullable|string|max:500',
             'gift_suggestion'                => 'nullable|string',
             'recommendations'                => 'nullable|string',
         ]);
+
+        if (isset($data['subdomain'])) {
+            $data['subdomain'] = $this->normalizeSubdomain($data['subdomain']) ?: null;
+        }
 
         $event->update($data);
 
@@ -148,5 +153,15 @@ class EventController extends Controller
         }
 
         return response()->json(null, 204);
+    }
+
+    private function normalizeSubdomain(string $value): string
+    {
+        $value = mb_strtolower(trim($value));
+        $value = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $value);
+        $value = preg_replace('/[\s_]+/', '-', $value);
+        $value = preg_replace('/[^a-z0-9-]/', '', $value);
+        $value = preg_replace('/-+/', '-', $value);
+        return trim($value, '-');
     }
 }
