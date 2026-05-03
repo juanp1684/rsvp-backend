@@ -33,6 +33,8 @@ class EventController extends Controller
             'confirm_attending_image_url'  => $event->confirm_attending_image  ? $disk->url($event->confirm_attending_image)  : null,
             'confirm_declined_image_url'   => $event->confirm_declined_image   ? $disk->url($event->confirm_declined_image)   : null,
             'song_url'                     => $event->song                     ? $disk->url($event->song)                     : null,
+            'dress_code_image_url'         => $event->dress_code_image         ? $disk->url($event->dress_code_image)         : null,
+            'gift_suggestion_image_url'    => $event->gift_suggestion_image    ? $disk->url($event->gift_suggestion_image)    : null,
         ]));
     }
 
@@ -64,6 +66,9 @@ class EventController extends Controller
             'civil_ceremony_same_venue'      => 'sometimes|boolean',
             'civil_reception_same_venue'     => 'sometimes|boolean',
             'ceremony_reception_same_venue'  => 'sometimes|boolean',
+            'subtitle'                       => 'nullable|string|max:500',
+            'gift_suggestion'                => 'nullable|string',
+            'recommendations'                => 'nullable|string',
         ]);
 
         $event->update($data);
@@ -77,7 +82,7 @@ class EventController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
-        $allowed = ['couple', 'couple_mobile', 'ceremony', 'civil', 'reception', 'invitation', 'confirm_attending', 'confirm_declined'];
+        $allowed = ['couple', 'couple_mobile', 'ceremony', 'civil', 'reception', 'invitation', 'confirm_attending', 'confirm_declined', 'dress_code', 'gift_suggestion'];
 
         if (! in_array($type, $allowed)) {
             return response()->json(['message' => 'Invalid image type.'], 422);
@@ -129,7 +134,7 @@ class EventController extends Controller
 
     public function destroyImage(Event $event, string $type): JsonResponse
     {
-        $allowed = ['couple', 'couple_mobile', 'ceremony', 'civil', 'reception', 'invitation', 'confirm_attending', 'confirm_declined'];
+        $allowed = ['couple', 'couple_mobile', 'ceremony', 'civil', 'reception', 'invitation', 'confirm_attending', 'confirm_declined', 'dress_code', 'gift_suggestion'];
 
         if (! in_array($type, $allowed)) {
             return response()->json(['message' => 'Invalid image type.'], 422);

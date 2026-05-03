@@ -44,6 +44,11 @@ class Event extends Model
         'civil_ceremony_same_venue',
         'civil_reception_same_venue',
         'ceremony_reception_same_venue',
+        'subtitle',
+        'dress_code_image',
+        'gift_suggestion',
+        'gift_suggestion_image',
+        'recommendations',
     ];
 
     protected $casts = [
