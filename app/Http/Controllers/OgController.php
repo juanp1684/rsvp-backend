@@ -22,10 +22,17 @@ class OgController extends Controller
             $image = e(str_starts_with($raw, 'http') ? $raw : url($raw));
         }
 
+        $imageType = $image ? match(strtolower(pathinfo($image, PATHINFO_EXTENSION))) {
+            'png'  => 'image/png',
+            'webp' => 'image/webp',
+            'gif'  => 'image/gif',
+            default => 'image/jpeg',
+        } : null;
+
         $ogImage = $image ? implode("\n    ", [
             "<meta property=\"og:image\" content=\"{$image}\">",
             "<meta property=\"og:image:secure_url\" content=\"{$image}\">",
-            "<meta property=\"og:image:type\" content=\"image/jpeg\">",
+            "<meta property=\"og:image:type\" content=\"{$imageType}\">",
             "<meta property=\"og:image:width\" content=\"1200\">",
             "<meta property=\"og:image:height\" content=\"630\">",
         ]) : '';
