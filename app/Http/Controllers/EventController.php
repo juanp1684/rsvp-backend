@@ -6,6 +6,9 @@ use App\Models\Event;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class EventController extends Controller
 {
@@ -99,7 +102,13 @@ class EventController extends Controller
             Storage::disk('public')->delete($event->$column);
         }
 
-        $path = $request->file('image')->store('event', 'public');
+        $image = (new ImageManager(new Driver()))
+            ->read($request->file('image'))
+            ->scaleDown(width: 1200)
+            ->toJpeg(80);
+
+        $path = 'event/' . Str::random(40) . '.jpg';
+        Storage::disk('public')->put($path, (string) $image);
         $event->update([$column => $path]);
 
         return response()->json(['url' => Storage::disk('public')->url($path)]);
