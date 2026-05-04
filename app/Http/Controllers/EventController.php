@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\JpegEncoder;
 use Intervention\Image\ImageManager;
 
 class EventController extends Controller
@@ -103,9 +104,9 @@ class EventController extends Controller
         }
 
         $image = (new ImageManager(new Driver()))
-            ->read($request->file('image'))
+            ->decode($request->file('image'))
             ->scaleDown(width: 1200)
-            ->toJpeg(80);
+            ->encode(new JpegEncoder(80));
 
         $path = 'event/' . Str::random(40) . '.jpg';
         Storage::disk('public')->put($path, (string) $image);
