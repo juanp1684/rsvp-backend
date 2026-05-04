@@ -103,13 +103,18 @@ class EventController extends Controller
             Storage::disk('public')->delete($event->$column);
         }
 
-        $image = (new ImageManager(new Driver()))
-            ->decode($request->file('image'))
-            ->scaleDown(width: 1200)
-            ->encode(new JpegEncoder(80));
+        if ($type === 'invitation') {
+            $encoded = (new ImageManager(new Driver()))
+                ->decode($request->file('image'))
+                ->scaleDown(width: 1200)
+                ->encode(new JpegEncoder(80));
 
-        $path = 'event/' . Str::random(40) . '.jpg';
-        Storage::disk('public')->put($path, (string) $image);
+            $path = 'event/' . Str::random(40) . '.jpg';
+            Storage::disk('public')->put($path, (string) $encoded);
+        } else {
+            $path = $request->file('image')->store('event', 'public');
+        }
+
         $event->update([$column => $path]);
 
         return response()->json(['url' => Storage::disk('public')->url($path)]);
