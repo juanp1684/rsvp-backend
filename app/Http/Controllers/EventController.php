@@ -39,6 +39,7 @@ class EventController extends Controller
             'song_url'                     => $event->song                     ? $disk->url($event->song)                     : null,
             'dress_code_image_url'         => $event->dress_code_image         ? $disk->url($event->dress_code_image)         : null,
             'gift_suggestion_image_url'    => $event->gift_suggestion_image    ? $disk->url($event->gift_suggestion_image)    : null,
+            'recommendations_image_url'   => $event->recommendations_image   ? $disk->url($event->recommendations_image)   : null,
         ]));
     }
 
@@ -91,7 +92,7 @@ class EventController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
-        $allowed = ['couple', 'couple_mobile', 'ceremony', 'civil', 'reception', 'invitation', 'confirm_attending', 'confirm_declined', 'dress_code', 'gift_suggestion'];
+        $allowed = ['couple', 'couple_mobile', 'ceremony', 'civil', 'reception', 'invitation', 'confirm_attending', 'confirm_declined', 'dress_code', 'gift_suggestion', 'recommendations'];
 
         if (! in_array($type, $allowed)) {
             return response()->json(['message' => 'Invalid image type.'], 422);
@@ -154,7 +155,7 @@ class EventController extends Controller
 
     public function destroyImage(Event $event, string $type): JsonResponse
     {
-        $allowed = ['couple', 'couple_mobile', 'ceremony', 'civil', 'reception', 'invitation', 'confirm_attending', 'confirm_declined', 'dress_code', 'gift_suggestion'];
+        $allowed = ['couple', 'couple_mobile', 'ceremony', 'civil', 'reception', 'invitation', 'confirm_attending', 'confirm_declined', 'dress_code', 'gift_suggestion', 'recommendations'];
 
         if (! in_array($type, $allowed)) {
             return response()->json(['message' => 'Invalid image type.'], 422);

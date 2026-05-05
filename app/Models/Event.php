@@ -50,6 +50,7 @@ class Event extends Model
         'gift_suggestion',
         'gift_suggestion_image',
         'recommendations',
+        'recommendations_image',
     ];
 
     protected $casts = [
