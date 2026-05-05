@@ -20,7 +20,7 @@ class CompanionController extends Controller
         );
 
         $data = $request->validate([
-            'full_name' => 'nullable|string|max:255',
+            'full_name' => 'required|string|max:255',
         ]);
 
         $companion = $invitee->companions()->create($data);
@@ -34,7 +34,7 @@ class CompanionController extends Controller
         abort_if($companion->invitee_id !== $invitee->id, 404);
 
         $data = $request->validate([
-            'full_name' => 'nullable|string|max:255',
+            'full_name' => 'required|string|max:255',
         ]);
 
         $companion->update($data);

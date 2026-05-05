@@ -39,7 +39,7 @@ class RsvpController extends Controller
             'status' => 'required|in:attending,declined',
             'notes' => 'nullable|string|max:500',
             'companions' => 'nullable|array|max:' . $invitee->allowed_companions,
-            'companions.*.full_name' => 'nullable|string|max:255',
+            'companions.*.full_name' => 'required|string|max:255',
         ]);
 
         $invitee->update([
