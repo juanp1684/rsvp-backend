@@ -20,10 +20,12 @@ class Invitee extends Model
         'allowed_companions',
         'status',
         'notes',
+        'invitation_sent',
     ];
 
     protected $casts = [
         'allowed_companions' => 'integer',
+        'invitation_sent'    => 'boolean',
     ];
 
     public function companions(): HasMany

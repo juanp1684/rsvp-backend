@@ -54,8 +54,9 @@ class InviteeController extends Controller
             'phone' => 'sometimes|nullable|string|max:50',
             'allowed_companions' => 'sometimes|integer|min:0|max:10',
             'status' => 'sometimes|in:pending,attending,declined',
-            'notes' => 'sometimes|nullable|string|max:500',
-            'type' => 'sometimes|in:regular,late',
+            'notes'           => 'sometimes|nullable|string|max:500',
+            'type'            => 'sometimes|in:regular,late',
+            'invitation_sent' => 'sometimes|boolean',
         ]);
 
         $invitee->update($data);
