@@ -16,8 +16,8 @@ class EventCarouselImageController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
-        if ($event->carouselImages()->count() >= 10) {
-            return response()->json(['message' => 'Maximum of 10 carousel images allowed.'], 422);
+        if ($event->carouselImages()->count() >= 3) {
+            return response()->json(['message' => 'Maximum of 3 carousel images allowed.'], 422);
         }
 
         $path = $request->file('image')->store('event/carousel', 'public');
@@ -33,6 +33,20 @@ class EventCarouselImageController extends Controller
             'id'  => $image->id,
             'url' => Storage::disk('public')->url($path),
         ], 201);
+    }
+
+    public function reorder(Request $request, Event $event): JsonResponse
+    {
+        $request->validate([
+            'ids'   => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        foreach ($request->ids as $order => $id) {
+            $event->carouselImages()->where('id', $id)->update(['sort_order' => $order]);
+        }
+
+        return response()->json(null, 204);
     }
 
     public function destroy(Event $event, EventCarouselImage $carouselImage): JsonResponse

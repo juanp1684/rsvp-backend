@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/images/{type}', [EventController::class, 'uploadImage']);
         Route::delete('/images/{type}', [EventController::class, 'destroyImage']);
         Route::post('/carousel-images', [EventCarouselImageController::class, 'store']);
+        Route::put('/carousel-images/reorder', [EventCarouselImageController::class, 'reorder']);
         Route::delete('/carousel-images/{carouselImage}', [EventCarouselImageController::class, 'destroy']);
         Route::post('/song', [EventController::class, 'uploadSong']);
         Route::delete('/song', [EventController::class, 'destroySong']);
