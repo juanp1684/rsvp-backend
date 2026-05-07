@@ -16,8 +16,8 @@ class EventCarouselImageController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
-        if ($event->carouselImages()->count() >= 3) {
-            return response()->json(['message' => 'Maximum of 3 carousel images allowed.'], 422);
+        if ($event->carouselImages()->count() >= 10) {
+            return response()->json(['message' => 'Maximum of 10 carousel images allowed.'], 422);
         }
 
         $path = $request->file('image')->store('event/carousel', 'public');
