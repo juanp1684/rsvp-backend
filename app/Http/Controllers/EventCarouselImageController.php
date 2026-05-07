@@ -7,6 +7,10 @@ use App\Models\EventCarouselImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\ImageManager;
 
 class EventCarouselImageController extends Controller
 {
@@ -20,7 +24,12 @@ class EventCarouselImageController extends Controller
             return response()->json(['message' => 'Maximum of 10 carousel images allowed.'], 422);
         }
 
-        $path = $request->file('image')->store('event/carousel', 'public');
+        $encoded = (new ImageManager(new Driver()))
+            ->decode($request->file('image'))
+            ->encode(new WebpEncoder(80));
+
+        $path = 'event/carousel/' . Str::random(40) . '.webp';
+        Storage::disk('public')->put($path, (string) $encoded);
 
         $nextOrder = ($event->carouselImages()->max('sort_order') ?? -1) + 1;
 

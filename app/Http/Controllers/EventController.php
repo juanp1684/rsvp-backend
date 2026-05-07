@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\Encoders\JpegEncoder;
+use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\ImageManager;
 
 class EventController extends Controller
@@ -108,17 +108,15 @@ class EventController extends Controller
             Storage::disk('public')->delete($event->$column);
         }
 
-        if ($type === 'invitation') {
-            $encoded = (new ImageManager(new Driver()))
-                ->decode($request->file('image'))
-                ->scaleDown(width: 1200)
-                ->encode(new JpegEncoder(80));
+        $heroBanner = in_array($type, ['couple', 'couple_mobile']);
+        $quality    = $heroBanner ? 100 : 80;
 
-            $path = 'event/' . Str::random(40) . '.jpg';
-            Storage::disk('public')->put($path, (string) $encoded);
-        } else {
-            $path = $request->file('image')->store('event', 'public');
-        }
+        $encoded = (new ImageManager(new Driver()))
+            ->decode($request->file('image'))
+            ->encode(new WebpEncoder($quality));
+
+        $path = 'event/' . Str::random(40) . '.webp';
+        Storage::disk('public')->put($path, (string) $encoded);
 
         $event->update([$column => $path]);
 
