@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     libpng-dev \
     libjpeg62-turbo-dev \
+    libwebp-dev \
     libonig-dev \
     libxml2-dev \
     libpq-dev \
@@ -15,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-configure gd --with-jpeg
+RUN docker-php-ext-configure gd --with-jpeg --with-webp
 
 RUN docker-php-ext-install \
     pdo \
