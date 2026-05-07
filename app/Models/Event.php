@@ -51,6 +51,7 @@ class Event extends Model
         'gift_suggestion_image',
         'recommendations',
         'recommendations_image',
+        'carousel_interval',
     ];
 
     protected $casts = [
@@ -63,6 +64,7 @@ class Event extends Model
         'civil_ceremony_same_venue' => 'boolean',
         'civil_reception_same_venue' => 'boolean',
         'ceremony_reception_same_venue' => 'boolean',
+        'carousel_interval'            => 'integer',
     ];
 
     public function invitees(): HasMany

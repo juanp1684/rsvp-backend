@@ -79,6 +79,7 @@ class EventController extends Controller
             'subtitle'                       => 'nullable|string|max:500',
             'gift_suggestion'                => 'nullable|string',
             'recommendations'                => 'nullable|string',
+            'carousel_interval'              => 'sometimes|integer|min:2|max:30',
         ]);
 
         if (isset($data['subdomain'])) {
