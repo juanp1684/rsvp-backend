@@ -40,6 +40,10 @@ class EventController extends Controller
             'dress_code_image_url'         => $event->dress_code_image         ? $disk->url($event->dress_code_image)         : null,
             'gift_suggestion_image_url'    => $event->gift_suggestion_image    ? $disk->url($event->gift_suggestion_image)    : null,
             'recommendations_image_url'   => $event->recommendations_image   ? $disk->url($event->recommendations_image)   : null,
+            'carousel_images'             => $event->carouselImages->map(fn ($img) => [
+                'id'  => $img->id,
+                'url' => $disk->url($img->path),
+            ])->values(),
         ]));
     }
 

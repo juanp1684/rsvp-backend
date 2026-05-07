@@ -69,4 +69,9 @@ class Event extends Model
     {
         return $this->hasMany(Invitee::class);
     }
+
+    public function carouselImages(): HasMany
+    {
+        return $this->hasMany(\App\Models\EventCarouselImage::class)->orderBy('sort_order');
+    }
 }

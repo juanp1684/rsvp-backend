@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanionController;
+use App\Http\Controllers\EventCarouselImageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InviteeController;
 use App\Http\Controllers\RsvpController;
@@ -32,6 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/', [EventController::class, 'update']);
         Route::post('/images/{type}', [EventController::class, 'uploadImage']);
         Route::delete('/images/{type}', [EventController::class, 'destroyImage']);
+        Route::post('/carousel-images', [EventCarouselImageController::class, 'store']);
+        Route::delete('/carousel-images/{carouselImage}', [EventCarouselImageController::class, 'destroy']);
         Route::post('/song', [EventController::class, 'uploadSong']);
         Route::delete('/song', [EventController::class, 'destroySong']);
         Route::post('/invitees/bulk-destroy', [InviteeController::class, 'bulkDestroy']);
