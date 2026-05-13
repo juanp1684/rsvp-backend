@@ -70,6 +70,7 @@ class UserController extends Controller
             'email'    => 'required|email|unique:users,email,' . $user->id,
             'role'     => 'required|in:admin,viewer,super_admin',
             'event_id' => 'nullable|exists:events,id',
+            'password' => 'nullable|string|min:8',
         ]);
 
         // Prevent super admin from demoting themselves
@@ -77,12 +78,18 @@ class UserController extends Controller
             return response()->json(['message' => 'You cannot change your own role.'], 422);
         }
 
-        $user->update([
+        $update = [
             'name'     => $data['name'],
             'email'    => $data['email'],
             'role'     => $data['role'],
             'event_id' => in_array($data['role'], ['admin', 'viewer']) ? ($data['event_id'] ?? null) : null,
-        ]);
+        ];
+
+        if (! empty($data['password'])) {
+            $update['password'] = Hash::make($data['password']);
+        }
+
+        $user->update($update);
 
         $user->load('event:id,name,slug');
 
