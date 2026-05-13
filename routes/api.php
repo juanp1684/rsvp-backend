@@ -6,6 +6,7 @@ use App\Http\Controllers\EventCarouselImageController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InviteeController;
 use App\Http\Controllers\RsvpController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json(['status' => 'ok']));
@@ -24,6 +25,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/password', [AuthController::class, 'changePassword']);
+
+    // User management (super admin only — controller enforces)
+    Route::apiResource('users', UserController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // Event list (super admin only — controller enforces)
     Route::get('/events', [EventController::class, 'index']);
