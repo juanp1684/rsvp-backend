@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/events', [EventController::class, 'index']);
 
     // All event-scoped routes — active.event middleware checks ownership
-    Route::middleware('active.event')->prefix('events/{event}')->group(function () {
+    Route::middleware(['active.event', 'forbid.viewers'])->prefix('events/{event}')->group(function () {
         Route::put('/', [EventController::class, 'update']);
         Route::post('/images/{type}', [EventController::class, 'uploadImage']);
         Route::delete('/images/{type}', [EventController::class, 'destroyImage']);

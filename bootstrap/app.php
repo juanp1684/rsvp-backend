@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'active.event' => \App\Http\Middleware\ResolveActiveEvent::class,
+            'forbid.viewers' => \App\Http\Middleware\ForbidViewers::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

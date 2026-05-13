@@ -25,11 +25,11 @@ class CreateAdminUser extends Command
 
         $password = $this->secret('Password');
 
-        $role = $this->choice('Role', ['admin', 'super_admin'], 0);
+        $role = $this->choice('Role', ['admin', 'super_admin', 'viewer'], 0);
 
         $eventId = null;
 
-        if ($role === 'admin') {
+        if (in_array($role, ['admin', 'viewer'])) {
             $events = Event::orderBy('name')->get();
 
             if ($events->isEmpty()) {
